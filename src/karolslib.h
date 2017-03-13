@@ -20,6 +20,8 @@
  */
 #ifndef _KAROLSLIB_H_
 #define _KAROLSLIB_H_
+#define KAROLSLIB_MAJOR_VERSION 0
+#define KAROLSLIB_MINOR_VERSION 1
 
 void karolslib_init();
 
