@@ -34,7 +34,9 @@ void karolslib_init() {
         routine* rtn;
         //Rtn has init? If yes call it.
         if((rtn = getRtn("init", getMod(i, modbrd)))) {
-            rtn->func();
+            if(rtn->func != NULL) {
+                rtn->func();
+            }
         }
     }
 }

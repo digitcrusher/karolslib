@@ -20,10 +20,6 @@
  */
 #ifdef _KAROLSLIB_H_
 #define _KAROLSLIB_H_
-#include "math.h"
-#include "module.h"
-#include "terminal.h"
-#include "utils.h"
 
 void karolslib_init();
 
