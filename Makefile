@@ -21,7 +21,7 @@ BD=./build
 AR=ar
 ARFLAGS=rcs
 ARINCLUDE=
-ARLIBS=/usr/lib/X11R6/lib/libX11.a
+ARLIBS=
 CC=g++
 CCFLAGS=-Wall -std=c++11 -ggdb -O0
 CCINCLUDE=./
@@ -30,7 +30,7 @@ CCLIBS=
 all: clean karolslib
 
 karolslib: karolslib.o math.o module.o terminal.o utils.o
-	$(AR) $(ARFLAGS) $(BD)/libkarolslib.a $(BD)/karolslib.o $(BD)/math.o $(BD)/module.o $(BD)/terminal.o $(BD)/utils.o $(CCLIBS)
+	$(AR) $(ARFLAGS) $(BD)/libkarolslib.a $(BD)/karolslib.o $(BD)/math.o $(BD)/module.o $(BD)/terminal.o $(BD)/utils.o $(ARLIBS)
 
 karolslib.o:
 	$(CC) $(CCFLAGS) -I $(CCINCLUDE) $(SD)/karolslib.cpp -c -o $(BD)/karolslib.o
