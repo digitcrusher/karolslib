@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifdef _KAROLSLIB_H_
+#ifndef _KAROLSLIB_H_
 #define _KAROLSLIB_H_
 
 void karolslib_init();
