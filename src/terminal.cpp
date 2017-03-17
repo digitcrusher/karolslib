@@ -54,6 +54,8 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     term->ocurx = 0;
     term->ocury = 0;
     term->flags = flags;
+    memset(term->obuff, '\0', TERMINAL_GET_BUFF_BYTES(term));
+    memset(term->ibuff, '\0', TERMINAL_GET_BUFF_BYTES(term));
 #if defined(__linux__)
     term->d = XOpenDisplay(NULL);
     if(!term->d) {
