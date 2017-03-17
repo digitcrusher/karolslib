@@ -56,7 +56,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     term->flags = flags;
 #if defined(__linux__)
     term->d = XOpenDisplay(NULL);
-    if(term->d == NULL) {
+    if(!term->d) {
         return NULL;
     }
     term->s = DefaultScreen(term->d);
@@ -86,7 +86,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     wndclass.lpszMenuName  = NULL;
     wndclass.lpszClassName = term->szAppName; //Window ID
     wndclass.hIconSm       = LoadIcon(NULL,IDI_APPLICATION); //Load icon for title bar
-    if(RegisterClassEx(&wndclass) == NULL) { //Register wndclass structure
+    if(!RegisterClassEx(&wndclass)) { //Register wndclass structure
         return NULL;
     }
     term->hwnd = CreateWindow(term->szAppName, //Window ID
@@ -101,7 +101,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
                         winargs.hInstance, //Handle to window initiation argument
                         NULL
                         );
-    if(term->hwnd == NULL) {
+    if(!term->hwnd) {
         return NULL;
     }
     ShowWindow(term->hwnd, winargs.iCmdShow); //Show window
