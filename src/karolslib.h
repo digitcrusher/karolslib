@@ -26,6 +26,7 @@
 #define main karolslib_user_main
 int karolslib_user_main(int argc, char** argv);
 #if defined(_WIN32)
+#include <windows.h>
 struct winmainargs {
     HINSTANCE hInstance;
     HINSTANCE hPrevInstance;

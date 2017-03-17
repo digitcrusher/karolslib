@@ -38,6 +38,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSRT szCmdLine,
     winargs.iCmdShow = iCmdShow;
     char** argv;
     int argc;
+    argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+    if(argv == NULL) {
+        return 0;
+    }
     return karolslib_main(argc, argv);
 }
 #endif
