@@ -24,7 +24,7 @@ ARINCLUDE=
 ARLIBS=
 CC=g++
 CCFLAGS=-Wall -std=c++11 -ggdb -O0
-CCINCLUDE=-I./
+CCINCLUDE=-I.
 CCLIBS=
 
 all: clean karolslib
