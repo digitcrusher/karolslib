@@ -82,7 +82,7 @@ static int karolslib_parseCommandLine(char *cmdline, char **argv) {
 				++argc;
 			}
 			/* Skip over word */
-			while(*bufp && ! *bufp == ' ') {
+			while(*bufp && *bufp != ' ') {
 				++bufp;
 			}
 		}
@@ -93,7 +93,7 @@ static int karolslib_parseCommandLine(char *cmdline, char **argv) {
 			++bufp;
 		}
 		/* Strip out \ from \" sequences */
-		if(argv && last_argc != argc  {
+		if(argv && last_argc != argc) {
 			karolslib_unEscapeQuotes(argv[last_argc]);
 		}
 		last_argc = argc;
@@ -111,10 +111,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine,
     winargs.iCmdShow = iCmdShow;
     char** argv;
     int argc;
-    argv = CommandLineToArgvW(GetCommandLineW(), &argc);
-    if(argv == NULL) {
-        return 0;
-    }
+	argc = karolslib_parseCommandLine(szCmdLine, NULL);
+	argv = (char**)malloc(sizeof(char*)*(strlen(szCmdLine)+1));
+	if(argv == NULL) {
+		return 0;
+	}
+	karolslib_parseCommandLine(szCmdLine, argv);
     return karolslib_main(argc, argv);
 }
 #endif
