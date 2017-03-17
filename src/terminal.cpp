@@ -33,7 +33,7 @@ static LRESULT CALLBACK karolslib_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, L
     return DefWindowProc(hwnd, iMsg, wParam, lParam); //Dump remainning message that wasn't calculated
 }
 #endif
-terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void (*close)(terminal*)) {
+terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void (*redraw)(terminal*)) {
     terminal* term = (terminal*)malloc(sizeof(terminal));
     term->fontw = TERMINAL_DEFAULT_FONT_WIDTH;
     term->fonth = TERMINAL_DEFAULT_FONT_HEIGHT;
@@ -156,7 +156,7 @@ void redrawTerminal(terminal* term) {
             }
         }
     }
-    if(term->redraw) {
+    if(term->redraw != NULL) {
         term->redraw();
     }
     XCopyArea(term->d, term->p, term->w, term->gc, 0, 0
