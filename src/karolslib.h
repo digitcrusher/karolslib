@@ -1,6 +1,6 @@
 /*
  * karolslib.h
- * Karolslib Source Code
+ * karolslib Source Code
  * Available on Github
  *
  * Copyright (C) 2017 Karol "digitcrusher" Łacina
@@ -22,6 +22,18 @@
 #define _KAROLSLIB_H_
 #define KAROLSLIB_MAJOR_VERSION 0
 #define KAROLSLIB_MINOR_VERSION 1
+
+#define main karolslib_user_main
+int karolslib_user_main(int argc, char** argv);
+#if defined(_WIN32)
+struct winmainargs {
+    HINSTANCE hInstance;
+    HINSTANCE hPrevInstance;
+    PSRT szCmdLine;
+    int iCmdShow;
+}
+extern winmainargs winargs;
+#endif
 
 void karolslib_init();
 

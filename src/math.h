@@ -1,6 +1,6 @@
 /*
  * math.h
- * Karolslib Source Code
+ * karolslib Source Code
  * Available on Github
  *
  * Copyright (C) 2017 Karol "digitcrusher" Łacina

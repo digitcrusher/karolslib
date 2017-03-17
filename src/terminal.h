@@ -1,6 +1,6 @@
 /*
  * terminal.h
- * Karolslib Source Code
+ * karolslib Source Code
  * Available on Github
  *
  * Copyright (C) 2017 Karol "digitcrusher" Łacina
@@ -20,9 +20,13 @@
  */
 #ifndef _KAROLSLIB_TERMINAL_H_
 #define _KAROLSLIB_TERMINAL_H_
+#if defined(__linux__)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xos.h>
+#elif defined(_WIN32)
+#include <windows.h>
+#endif
 
 #define TERMINAL_GET_IBUFF_CHAR(t, x, y) ( *((t)->ibuff+(x)+(y)*(t)->buffw) )
 #define TERMINAL_GET_OBUFF_CHAR(t, x, y) ( *((t)->obuff+(x)+(y)*(t)->buffw) )
@@ -46,22 +50,34 @@
 //Default values
 #define TERMINAL_DEFAULT_BUFF_WIDTH 80
 #define TERMINAL_DEFAULT_BUFF_HEIGHT 25
+#if defined(__linux__)
 #define TERMINAL_DEFAULT_FONT_WIDTH 5
 #define TERMINAL_DEFAULT_FONT_HEIGHT 11
 #define TERMINAL_DEFAULT_OFFSETX 0
 #define TERMINAL_DEFAULT_OFFSETY 9
+#elif defined(_WIN32)
+#define TERMINAL_DEFAULT_FONT_WIDTH 5
+#define TERMINAL_DEFAULT_FONT_HEIGHT 11
+#define TERMINAL_DEFAULT_OFFSETX 0
+#define TERMINAL_DEFAULT_OFFSETY 9
+#endif
 #define TERMINAL_DEFAULT_MARGINTOP 1
 #define TERMINAL_DEFAULT_MARGINRIGHT 0
 #define TERMINAL_DEFAULT_MARGINBOTTOM 0
 #define TERMINAL_DEFAULT_MARGINLEFT 1
-#define TERMINAL_DEFAULT_FLAGS TERMINAL_IECHO | TERMINAL_N_UPDATE | TERMINAL_MOVE_OCUR | TERMINAL_CURSOR
+#define TERMINAL_DEFAULT_FLAGS (TERMINAL_IECHO | TERMINAL_N_UPDATE | TERMINAL_MOVE_OCUR | TERMINAL_CURSOR)
 
 struct terminal {
+#if defined(__linux__)
     Display* d;
     Window w;
     GC gc;
     Pixmap p;
     int s;
+#elif defined(_WIN32)
+    HWND hwnd;
+    char* szAppName;
+#endif
     int fontw, fonth;
     int offsetx, offsety;
     int margintop, marginright, marginbottom, marginleft;

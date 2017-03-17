@@ -1,6 +1,6 @@
 /*
  * karolslib.cpp
- * Karolslib Source Code
+ * karolslib Source Code
  * Available on Github
  *
  * Copyright (C) 2017 Karol "digitcrusher" Łacina
@@ -21,6 +21,26 @@
 #include <stdlib.h>
 #include <src/module.h>
 #include <src/karolslib.h>
+
+#ifdef main
+#undef main
+#endif
+#define karolslib_main main
+int karolslib_main(int argc, char** argv) {
+    return karolslib_user_main(argc, argv);
+}
+#if defined(_WIN32)
+winmainargs winargs;
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSRT szCmdLine, int iCmdShow) {
+    winargs.hInstance = hInstance;
+    winargs.hPrevInstance = hPrevInstance;
+    winargs.szCmdLine = szCmdLine;
+    winargs.iCmdShow = iCmdShow;
+    char** argv;
+    int argc;
+    return karolslib_main(argc, argv);
+}
+#endif
 
 void karolslib_init() {
     //Create module main and add it to the global modboard modbrd.
