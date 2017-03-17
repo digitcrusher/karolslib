@@ -30,7 +30,7 @@ int karolslib_user_main(int argc, char** argv);
 struct winmainargs {
     HINSTANCE hInstance;
     HINSTANCE hPrevInstance;
-    PSRT szCmdLine;
+    PSTR szCmdLine;
     int iCmdShow;
 }
 extern winmainargs winargs;
