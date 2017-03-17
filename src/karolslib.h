@@ -32,7 +32,8 @@ struct winmainargs {
     HINSTANCE hPrevInstance;
     PSTR szCmdLine;
     int iCmdShow;
-}winargs;
+};
+extern winmainargs winargs;
 #endif
 
 void karolslib_init();
