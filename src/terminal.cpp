@@ -35,7 +35,7 @@ struct winmsg {
     WPARAM wParam;
     LPARAM lParam;
 }
-static LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
+static LRESULT CALLBACK karolslib_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
     return DefWindowProc(hwnd, iMsg, wParam, lParam); //Dump remainning message that wasn't calculated
 }
 #endif
@@ -81,7 +81,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*)) {
     WNDCLASSEX wndclass; //Temporary structure with window settings
     wndclass.cbSize        = sizeof(wndclass); //Size of WNDCLASSEX
     wndclass.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC; //Style parameters
-    wndclass.lpfnWndProc   = WndProc; //Pointer to WndProc which handles messages
+    wndclass.lpfnWndProc   = karoslib_WndProc; //Pointer to WndProc which handles messages
     wndclass.cbClsExtra    = 0;
     wndclass.cbWndExtra    = 0;
     wndclass.hInstance     = winargs.hInstance;
@@ -238,7 +238,7 @@ void updateTerminal(terminal* term) {
         }
     }
     redrawTerminal(term);
-#elif defined(_WIN32)
+#elif defined(_WIN32) && defined(SOME_REALLY_UNINPORTANT_DEFINE_WHICH_ISNT_REAL)
     switch(iMsg) {
         case WM_PAINT:
             hdc = BeginPaint(hwnd,&ps);
@@ -298,12 +298,6 @@ void checkTerminal(terminal* term) {
 #if defined(__linux__)
     XResizeWindow(term->d, term->w, TERMINAL_GET_TEXTAREA_WIDTH(term), TERMINAL_GET_TEXTAREA_HEIGHT(term));
 #elif defined(_WIN32)
-MoveWindow(
-  _In_ HWND hWnd,
-  _In_ int  X,
-  _In_ int  Y,
-  _In_ int  nWidth,
-  _In_ int  nHeight, 1);
 #endif
     if(term->ocurx < 0) {
         term->ocurx = term->buffw-1;

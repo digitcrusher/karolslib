@@ -30,6 +30,10 @@ int karolslib_main(int argc, char** argv) {
     return karolslib_user_main(argc, argv);
 }
 #if defined(_WIN32)
+#ifdef WinMain
+#undef WinMain
+#endif
+#define karolslib_WinMain WinMain
 static void karolslib_unEscapeQuotes( char *arg ) {
 	char *last = NULL;
 
@@ -104,7 +108,7 @@ static int karolslib_parseCommandLine(char *cmdline, char **argv) {
 	return argc;
 }
 winmainargs winargs;
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow) {
+int WINAPI karolslib_WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow) {
     winargs.hInstance = hInstance;
     winargs.hPrevInstance = hPrevInstance;
     winargs.szCmdLine = szCmdLine;
