@@ -25,21 +25,15 @@
 #include <src/terminal.h>
 #include <src/karolslib.h>
 
-terminal* stdterm = createTerminal(TERMINAL_DEFAULT_BUFF_WIDTH, TERMINAL_DEFAULT_BUFF_HEIGHT, TERMINAL_DEFAULT_FLAGS, NULL);
+terminal* stdterm = createTerminal(TERMINAL_DEFAULT_BUFF_WIDTH, TERMINAL_DEFAULT_BUFF_HEIGHT, TERMINAL_DEFAULT_FLAGS, NULL, NULL);
 
 #if defined(_WIN32)
 static unsigned int windowid=0;
-struct winmsg {
-    HWND hwnd;
-    UINT iMsg;
-    WPARAM wParam;
-    LPARAM lParam;
-}
 static LRESULT CALLBACK karolslib_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
     return DefWindowProc(hwnd, iMsg, wParam, lParam); //Dump remainning message that wasn't calculated
 }
 #endif
-terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*)) {
+terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void (*close)(terminal*)) {
     terminal* term = (terminal*)malloc(sizeof(terminal));
     term->fontw = TERMINAL_DEFAULT_FONT_WIDTH;
     term->fonth = TERMINAL_DEFAULT_FONT_HEIGHT;
@@ -50,6 +44,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*)) {
     term->marginleft = TERMINAL_DEFAULT_MARGINLEFT;
     term->marginbottom = TERMINAL_DEFAULT_MARGINBOTTOM;
     term->close = close;
+    term->redraw = redraw;
     term->buffw = w;
     term->buffh = h;
     term->ibuff = (char*)malloc(TERMINAL_GET_BUFF_BITS(term));
@@ -160,6 +155,9 @@ void redrawTerminal(terminal* term) {
                            ,TERMINAL_GET_CHAR_Y_COORD(term, y), c, strlen(c));
             }
         }
+    }
+    if(term->redraw) {
+        term->redraw();
     }
     XCopyArea(term->d, term->p, term->w, term->gc, 0, 0
              ,TERMINAL_GET_TEXTAREA_WIDTH(term)

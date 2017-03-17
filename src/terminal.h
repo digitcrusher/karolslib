@@ -82,6 +82,7 @@ struct terminal {
     int offsetx, offsety;
     int margintop, marginright, marginbottom, marginleft;
     void (*close)(terminal*);
+    void (*redraw)(terminal*);
 
     int buffw, buffh;
     char* ibuff;
@@ -91,7 +92,7 @@ struct terminal {
     int flags;
 };
 
-terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*));
+terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void (*redraw)(terminal*));
 void deleteTerminal(terminal* term);
 void redrawTerminal(terminal* term);
 void updateTerminal(terminal* term); //Calls close when received a destroy message
