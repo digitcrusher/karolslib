@@ -21,11 +21,11 @@
 #ifndef _KAROLSLIB_UTILS_H_
 #define _KAROLSLIB_UTILS_H_
 
-#if defined(WIN32) && defined(_WIN32) && defined(__WIN32)
+#if defined(__linux__)
+int getch();
+#elif defined(_WIN32)
 long getMS();
 void hidecursor();
-#else
-int getch();
 #endif
 
 int indexof(const char* string, char search); //Search string for search

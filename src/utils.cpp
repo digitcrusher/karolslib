@@ -74,22 +74,7 @@ template<class T> T Vector<T>::operator[](int n) {
     return array[n];
 }
 
-#if defined(WIN32) && defined(_WIN32) && defined(__WIN32)
-#include <windows.h>
-long getMS() { //Get milliseconds
-    LARGE_INTEGER f,c; //Union which will store frequency and ticks
-    if(!QueryPerformanceFrequency(&f)) return 0; //Try to get processor clock frequency
-    if(!QueryPerformanceCounter(&c)) return 0; //Try to get processor clock ticks
-    return c.QuadPart/(f.QuadPart/1000); //Return milliseconds (Ticks / (Frequency / MSperSECOND))
-}
-void hidecursor() {
-    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_CURSOR_INFO info;
-    info.dwSize = 100;
-    info.bVisible = FALSE;
-    SetConsoleCursorInfo(consoleHandle, &info);
-}
-#else
+#if defined(__linux__)
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
@@ -103,6 +88,21 @@ int getch() {
   ch = getchar();
   tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
   return ch;
+}
+#elif defined(_WIN32)
+#include <windows.h>
+long getMS() { //Get milliseconds
+    LARGE_INTEGER f,c; //Union which will store frequency and ticks
+    if(!QueryPerformanceFrequency(&f)) return 0; //Try to get processor clock frequency
+    if(!QueryPerformanceCounter(&c)) return 0; //Try to get processor clock ticks
+    return c.QuadPart/(f.QuadPart/1000); //Return milliseconds (Ticks / (Frequency / MSperSECOND))
+}
+void hidecursor() {
+    HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO info;
+    info.dwSize = 100;
+    info.bVisible = FALSE;
+    SetConsoleCursorInfo(consoleHandle, &info);
 }
 #endif
 

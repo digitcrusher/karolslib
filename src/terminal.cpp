@@ -157,7 +157,7 @@ void redrawTerminal(terminal* term) {
         }
     }
     if(term->redraw != NULL) {
-        term->redraw();
+        term->redraw(term);
     }
     XCopyArea(term->d, term->p, term->w, term->gc, 0, 0
              ,TERMINAL_GET_TEXTAREA_WIDTH(term)
