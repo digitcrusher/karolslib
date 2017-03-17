@@ -138,7 +138,7 @@ float fatp(V p1, V p2) { //float angle to point
     if(p2.y < p1.y && p2.x > p1.x)
         quarter = 3;
     angle = asin(b/sqrt(pow(b,2)+pow(a,2)));
-    angle = ((M_PI_2+M_PI_2*quarter-angle)*!(floor(quarter/2)==quarter/2)) +
-            ((angle+M_PI_2*quarter)   * (floor(quarter/2)==quarter/2));
+    angle = (((M_PI/2)+(M_PI/2)*quarter-angle)*!(floor(quarter/2)==quarter/2)) +
+            ((angle+(M_PI/2)*quarter)   * (floor(quarter/2)==quarter/2));
     return angle;
 }
