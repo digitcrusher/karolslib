@@ -76,7 +76,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     WNDCLASSEX wndclass; //Temporary structure with window settings
     wndclass.cbSize        = sizeof(wndclass); //Size of WNDCLASSEX
     wndclass.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC; //Style parameters
-    wndclass.lpfnWndProc   = karoslib_WndProc; //Pointer to WndProc which handles messages
+    wndclass.lpfnWndProc   = karolslib_WndProc; //Pointer to WndProc which handles messages
     wndclass.cbClsExtra    = 0;
     wndclass.cbWndExtra    = 0;
     wndclass.hInstance     = winargs.hInstance;
