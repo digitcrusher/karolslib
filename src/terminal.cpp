@@ -30,6 +30,14 @@ terminal* stdterm = createTerminal(TERMINAL_DEFAULT_BUFF_WIDTH, TERMINAL_DEFAULT
 #if defined(_WIN32)
 static unsigned int windowid=0;
 static LRESULT CALLBACK karolslib_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
+    HDC hdc;
+    PAINTSTRUCT ps;
+    switch(iMsg) {
+        case WM_PAINT:
+		    hdc = BeginPaint(hwnd, &ps);
+    		EndPaint(hwnd, &ps);
+            return 0;
+    }
     return DefWindowProc(hwnd, iMsg, wParam, lParam); //Dump remainning message that wasn't calculated
 }
 #endif
@@ -74,7 +82,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     XClearWindow(term->d, term->w);
     XMapWindow(term->d, term->w);
 #elif defined(_WIN32)
-    term->szAppName = uitos(windowid);
+    char* szAppName = uitos(windowid++);
     WNDCLASSEX wndclass; //Temporary structure with window settings
     wndclass.cbSize        = sizeof(wndclass); //Size of WNDCLASSEX
     wndclass.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC; //Style parameters
@@ -86,12 +94,12 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     wndclass.hCursor       = LoadCursor(NULL,IDC_ARROW); //Load cursor for window
     wndclass.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH); //Window background color
     wndclass.lpszMenuName  = NULL;
-    wndclass.lpszClassName = term->szAppName; //Window ID
+    wndclass.lpszClassName = szAppName; //Window ID
     wndclass.hIconSm       = LoadIcon(NULL,IDI_APPLICATION); //Load icon for title bar
     if(!RegisterClassEx(&wndclass)) { //Register wndclass structure
         return NULL;
     }
-    term->hwnd = CreateWindow(term->szAppName, //Window ID
+    term->hwnd = CreateWindow(szAppName, //Window ID
                         "Terminal", //Window title
                         WS_OVERLAPPEDWINDOW, //Window style
                         CW_USEDEFAULT, //Starting x position
@@ -108,6 +116,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     }
     ShowWindow(term->hwnd, winargs.iCmdShow); //Show window
     UpdateWindow(term->hwnd); //Redraw window
+    free(szAppName);
 #endif
     return term;
 }
@@ -119,6 +128,7 @@ void deleteTerminal(terminal* term) {
     XDestroyWindow(term->d, term->w);
     XCloseDisplay(term->d);
 #elif defined(_WIN32)
+    DestroyWindow(term->hwnd);
 #endif
     free(term);
 }
@@ -238,60 +248,64 @@ void updateTerminal(terminal* term) {
         }
     }
     redrawTerminal(term);
-#elif defined(_WIN32) && defined(SOME_REALLY_UNINPORTANT_DEFINE_WHICH_ISNT_REAL)
-    switch(iMsg) {
-        case WM_PAINT:
-            hdc = BeginPaint(hwnd,&ps);
-            render(hwnd);
-            EndPaint(hwnd,&ps);
-            return 0;
-            break;
-        case WM_DESTROY:
-            PostQuitMessage(0);
-            return 0;
-            break;
-        case WM_CLOSE:
-            PostQuitMessage(0);
-            return 0;
-            break;
-        case WM_KEYDOWN:
-            switch(wParam) {
-                case VK_UP:
-                    input.v=0.25;
+#elif defined(_WIN32)
+    MSG msg;
+    while(PeekMessage(&msg, term->hwnd, 0, 0, 1)) {
+        TranslateMessage(&msg);
+        switch(msg.message) {
+            case WM_QUIT:
+                exit(0);
+                break;
+            case WM_DESTROY:
+            case WM_CLOSE:
+                if(term->close != NULL) {
+                    term->close(term);
+                }
+                break;
+            case WM_PAINT:
+                redrawTerminal(term);
+                break;/*
+            case WM_CHAR:
+                break;*/
+            case WM_KEYDOWN:
+                switch(msg.wParam) {
+                    case VK_UP:
+                        --term->icury;
+                        if(term->flags & TERMINAL_MOVE_OCUR) {
+                            --term->ocury;
+                        }
+                        break;
+                    case VK_LEFT:
+                        --term->icurx;
+                        if(term->flags & TERMINAL_MOVE_OCUR) {
+                            --term->ocurx;
+                        }
+                        break;
+                    case VK_DOWN:
+                        if(TERMINAL_GET_CURR_IBUFF_CHAR(term) != '\0') {
+                            ++term->icury;
+                        }
+                        if(term->flags & TERMINAL_MOVE_OCUR) {
+                            ++term->ocury;
+                        }
+                        break;
+                    case VK_RIGHT:
+                        if(TERMINAL_GET_CURR_IBUFF_CHAR(term) != '\0') {
+                            ++term->icurx;
+                        }
+                        if(term->flags & TERMINAL_MOVE_OCUR) {
+                            ++term->ocurx;
+                        }
                     break;
-                case VK_LEFT:
-                    input.vr=-0.25;
-                    break;
-                case VK_DOWN:
-                    input.v=-0.25;
-                    break;
-                case VK_RIGHT:
-                    input.vr=0.25;
-                    break;
-                case VK_HOME:
-                    reset=1;
-                    break;
-            }
-            return 0;
-            break;
-        case WM_KEYUP:
-            switch(wParam) {
-                case VK_UP:
-                    input.v=0;
-                    break;
-                case VK_LEFT:
-                    input.vr=0;
-                    break;
-                case VK_DOWN:
-                    input.v=0;
-                    break;
-                case VK_RIGHT:
-                    input.vr=0;
-                    break;
-            }
-            return 0;
-            break;
+                }
+                checkTerminal(term);
+                break;
+            default:
+                DispatchMessage(&msg);
+                break;
+        }
     }
+    redrawTerminal(term);
 #endif
 }
 void checkTerminal(terminal* term) {

@@ -76,7 +76,6 @@ struct terminal {
     int s;
 #elif defined(_WIN32)
     HWND hwnd;
-    char* szAppName;
 #endif
     int fontw, fonth;
     int offsetx, offsety;
