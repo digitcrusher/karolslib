@@ -30,7 +30,7 @@ int karolslib_main(int argc, char** argv) {
     return karolslib_user_main(argc, argv);
 }
 #if defined(_WIN32)
-#undef main
+#define main karolslib_main
 #ifdef WinMain
 #undef WinMain
 #endif
