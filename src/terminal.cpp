@@ -89,7 +89,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     wndclass.lpfnWndProc   = karolslib_WndProc; //Pointer to WndProc which handles messages
     wndclass.cbClsExtra    = 0;
     wndclass.cbWndExtra    = 0;
-    wndclass.hInstance     = winargs.hInstance;
+    wndclass.hInstance     = karolslib_hInstance;
     wndclass.hIcon         = LoadIcon(NULL,IDI_APPLICATION); //Load icon for taskbar
     wndclass.hCursor       = LoadCursor(NULL,IDC_ARROW); //Load cursor for window
     wndclass.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH); //Window background color
@@ -108,13 +108,13 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
                         TERMINAL_GET_TEXTAREA_HEIGHT(term), //Starting height
                         NULL, //Handle to parent window
                         NULL, //Handle to parent window menu
-                        winargs.hInstance, //Handle to window initiation argument
+                        karolslib_hInstance, //Handle to window initiation argument
                         NULL
                         );
     if(!term->hwnd) {
         return NULL;
     }
-    ShowWindow(term->hwnd, winargs.iCmdShow); //Show window
+    ShowWindow(term->hwnd, karolslib_iCmdShow); //Show window
     UpdateWindow(term->hwnd); //Redraw window
     free(szAppName);
 #endif

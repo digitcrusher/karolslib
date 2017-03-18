@@ -27,13 +27,10 @@
 int karolslib_user_main(int argc, char** argv);
 #if defined(_WIN32)
 #include <windows.h>
-struct winmainargs {
-    HINSTANCE hInstance;
-    HINSTANCE hPrevInstance;
-    PSTR szCmdLine;
-    int iCmdShow;
-};
-extern winmainargs winargs;
+extern HINSTANCE karolslib_hInstance;
+extern HINSTANCE karolslib_hPrevInstance;
+extern PSTR karolslib_szCmdLine;
+extern int karolslib_iCmdShow;
 #endif
 
 void karolslib_init();
