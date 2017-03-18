@@ -22,10 +22,12 @@
 #include <src/module.h>
 #include <src/karolslib.h>
 
+#if !defined(_WIN32)
 #ifdef main
 #undef main
 #endif
 #define karolslib_main main
+#endif
 int karolslib_main(int argc, char** argv) {
     return karolslib_user_main(argc, argv);
 }
