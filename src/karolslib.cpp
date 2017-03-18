@@ -36,9 +36,8 @@ int karolslib_main(int argc, char** argv) {
 #undef WinMain
 #endif
 #define karolslib_WinMain WinMain
-static void karolslib_unEscapeQuotes( char *arg ) {
+static void karolslib_unEscapeQuotes(char *arg) {
 	char *last = NULL;
-
 	while(*arg) {
 		if(*arg == '"' && *last == '\\') {
 			char *c_curr = arg;
@@ -59,7 +58,6 @@ static int karolslib_parseCommandLine(char *cmdline, char **argv) {
 	char *bufp;
 	char *lastp = NULL;
 	int argc, last_argc;
-
 	argc = last_argc = 0;
 	for(bufp = cmdline; *bufp;) {
 		/* Skip leading whitespace */
