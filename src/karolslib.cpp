@@ -39,12 +39,12 @@ int karolslib_main(int argc, char** argv) {
 static void karolslib_unEscapeQuotes( char *arg ) {
 	char *last = NULL;
 
-	while( *arg ) {
-		if( *arg == '"' && *last == '\\' ) {
+	while(*arg) {
+		if(*arg == '"' && *last == '\\') {
 			char *c_curr = arg;
 			char *c_last = last;
 
-			while( *c_curr ) {
+			while(*c_curr) {
 				*c_last = *c_curr;
 				c_last = c_curr;
 				c_curr++;
