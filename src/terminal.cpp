@@ -177,6 +177,30 @@ void redrawTerminal(terminal* term) {
              ,TERMINAL_GET_TEXTAREA_HEIGHT(term), 0, 0);
     XFreePixmap(term->d, term->p);
 #elif defined(_WIN32)
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+    HDC hdcTemp = GetDC(hwnd);
+    term->hdc = CreateCompatibleDC(hdcTemp);
+    HBITMAP hbmMem = CreateCompatibleBitmap(hdcTemp,rect.right-rect.left,rect.bottom-rect.top);
+    HGDIOBJ hbmOld = SelectObject(term->hdc, hbmMem);
+    SetTextColor(term->hdc, RGB(255,255,255));
+    SetBkColor(term->hdc, RGB(0,0,0));
+    for(int x=0; x<term->buffw; x++) {
+        for(int y=0; y<term->buffh; y++) {
+            char c[2];
+            *c = TERMINAL_GET_OBUFF_CHAR(term, x, y);
+            *(c+1) = '\0';
+            TextOut(term->hdc, TERMINAL_GET_CHAR_X_COORD(term, x)
+                   ,TERMINAL_GET_CHAR_Y_COORD(term, y), c, strlen(c));
+        }
+    }
+    if(term->redraw != NULL) {
+        term->redraw(term);
+    }
+    BitBlt(hdcTemp,rect.left,rect.top,rect.right-rect.left, rect.bottom-rect.top,term->hdc,0,0,SRCCOPY);
+    SelectObject(term->hdc, hbmOld);
+    DeleteObject(hbmMem);
+    DeleteDC(term->hdc);
 #endif
 }
 void updateTerminal(terminal* term) {

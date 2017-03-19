@@ -76,6 +76,7 @@ struct terminal {
     int s;
 #elif defined(_WIN32)
     HWND hwnd;
+    HDC hdc;
 #endif
     int fontw, fonth;
     int offsetx, offsety;
