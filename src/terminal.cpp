@@ -37,6 +37,7 @@ static LRESULT CALLBACK karolslib_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, L
 		    hdc = BeginPaint(hwnd, &ps);
     		EndPaint(hwnd, &ps);
             return 0;
+            break;
     }
     return DefWindowProc(hwnd, iMsg, wParam, lParam); //Dump remainning message that wasn't calculated
 }
@@ -262,8 +263,7 @@ void updateTerminal(terminal* term) {
                     term->close(term);
                 }
                 break;
-            case WM_PAINT:
-                redrawTerminal(term);
+            case WM_CREATE:
                 break;/*
             case WM_CHAR:
                 break;*/
