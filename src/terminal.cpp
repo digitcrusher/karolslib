@@ -178,8 +178,8 @@ void redrawTerminal(terminal* term) {
     XFreePixmap(term->d, term->p);
 #elif defined(_WIN32)
     RECT rect;
-    GetClientRect(hwnd, &rect);
-    HDC hdcTemp = GetDC(hwnd);
+    GetClientRect(term->hwnd, &rect);
+    HDC hdcTemp = GetDC(term->hwnd);
     term->hdc = CreateCompatibleDC(hdcTemp);
     HBITMAP hbmMem = CreateCompatibleBitmap(hdcTemp,rect.right-rect.left,rect.bottom-rect.top);
     HGDIOBJ hbmOld = SelectObject(term->hdc, hbmMem);
