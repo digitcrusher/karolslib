@@ -22,8 +22,7 @@ LD=ar
 LDFLAGS=rcs
 LDLIBS=
 CC=g++
-CCFLAGS=-Wall -std=c++11 -ggdb -O0
-CCINCLUDE=-I.
+CCFLAGS=-Wall -std=c++11 -ggdb -O0 -I.
 
 all: clean karolslib
 
@@ -31,19 +30,19 @@ karolslib: karolslib.o math.o module.o terminal.o utils.o
 	$(LD) $(LDFLAGS) $(BD)/libkarolslib.a $(BD)/karolslib.o $(BD)/math.o $(BD)/module.o $(BD)/terminal.o $(BD)/utils.o $(LDLIBS)
 
 karolslib.o:
-	$(CC) $(CCFLAGS) $(CCINCLUDE) $(SD)/karolslib.cpp -c -o $(BD)/karolslib.o
+	$(CC) $(CCFLAGS) $(SD)/karolslib.cpp -c -o $(BD)/karolslib.o
 
 math.o:
-	$(CC) $(CCFLAGS) $(CCINCLUDE) $(SD)/math.cpp -c -o $(BD)/math.o
+	$(CC) $(CCFLAGS) $(SD)/math.cpp -c -o $(BD)/math.o
 
 module.o:
-	$(CC) $(CCFLAGS) $(CCINCLUDE) $(SD)/module.cpp -c -o $(BD)/module.o
+	$(CC) $(CCFLAGS) $(SD)/module.cpp -c -o $(BD)/module.o
 
 terminal.o:
-	$(CC) $(CCFLAGS) $(CCINCLUDE) $(SD)/terminal.cpp -c -o $(BD)/terminal.o
+	$(CC) $(CCFLAGS) $(SD)/terminal.cpp -c -o $(BD)/terminal.o
 
 utils.o:
-	$(CC) $(CCFLAGS) $(CCINCLUDE) $(SD)/utils.cpp -c -o $(BD)/utils.o
+	$(CC) $(CCFLAGS) $(SD)/utils.cpp -c -o $(BD)/utils.o
 
 clean:
 	rm -f $(BD)/libkarolslib.a $(BD)/karolslib.o $(BD)/math.o $(BD)/module.o $(BD)/terminal.o $(BD)/utils.o

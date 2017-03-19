@@ -22,7 +22,7 @@
 #include <string.h> //strlen, strcpy, strcmp
 #include <src/module.h>
 
-modboard* modbrd = createModBoard();
+modboard* stdmodbrd;
 
 routine* createRoutine(const char* name, void (*func)()) {
     routine* rtn = (routine*)malloc(sizeof(routine)); //Allocate memory for rtn.

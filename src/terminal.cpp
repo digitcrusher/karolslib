@@ -25,7 +25,7 @@
 #include <src/terminal.h>
 #include <src/karolslib.h>
 
-terminal* stdterm = createTerminal(TERMINAL_DEFAULT_BUFF_WIDTH, TERMINAL_DEFAULT_BUFF_HEIGHT, TERMINAL_DEFAULT_FLAGS, NULL, NULL);
+terminal* stdterm;
 
 #if defined(_WIN32)
 static unsigned int windowid=0;

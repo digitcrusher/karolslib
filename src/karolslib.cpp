@@ -20,6 +20,7 @@
  */
 #include <stdlib.h>
 #include <src/module.h>
+#include <src/terminal.h>
 #include <src/karolslib.h>
 
 #if !defined(_WIN32)
@@ -129,17 +130,21 @@ int WINAPI karolslib_WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR 
 #endif
 
 void karolslib_init() {
+    //Set up stdmodbrd.
+    stdmodbrd = createModBoard();
+    //Set up stdterm.
+    stdterm = createTerminal(TERMINAL_DEFAULT_BUFF_WIDTH, TERMINAL_DEFAULT_BUFF_HEIGHT, TERMINAL_DEFAULT_FLAGS, NULL, NULL);
     //Create module main and add it to the global modboard modbrd.
-    addMod(*createModule("main", NULL), modbrd);
+    addMod(*createModule("main", NULL), stdmodbrd);
     //Create routine main and add it to module main from modbrd.
-    addRtn(*createRoutine("main", (void (*)())NULL), getMod("main", modbrd));
+    addRtn(*createRoutine("main", (void (*)())NULL), getMod("main", stdmodbrd));
     //Create init.
-    addRtn(*createRoutine("init", (void (*)())NULL), getMod("main", modbrd));
+    addRtn(*createRoutine("init", (void (*)())NULL), getMod("main", stdmodbrd));
     //Iterate over the modules from modbrd.
-    for(int i=0; i<modbrd->size; i++) {
+    for(int i=0; i<stdmodbrd->size; i++) {
         routine* rtn;
         //Rtn has init? If yes call it.
-        if((rtn = getRtn("init", getMod(i, modbrd)))) {
+        if((rtn = getRtn("init", getMod(i, stdmodbrd)))) {
             if(rtn->func != NULL) {
                 rtn->func();
             }

@@ -21,7 +21,7 @@
 #ifndef _KAROLSLIB_H_
 #define _KAROLSLIB_H_
 #define KAROLSLIB_MAJOR_VERSION 0
-#define KAROLSLIB_MINOR_VERSION 1
+#define KAROLSLIB_MINOR_VERSION 2
 
 #define main karolslib_user_main
 int karolslib_user_main(int argc, char** argv);

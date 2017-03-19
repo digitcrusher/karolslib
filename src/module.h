@@ -60,6 +60,6 @@ void deleteModBoard(modboard* brd);
 void resetModBoard(modboard& brd);
 void resetModBoard(modboard* brd);
 
-extern modboard* modbrd; //Global modboard
+extern modboard* stdmodbrd; //Global modboard
 
 #endif
