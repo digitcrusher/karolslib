@@ -38,6 +38,9 @@ static LRESULT CALLBACK karolslib_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, L
     		EndPaint(hwnd, &ps);
             return 0;
             break;
+        case WM_TIMER:
+            return 0;
+            break;
     }
     return DefWindowProc(hwnd, iMsg, wParam, lParam); //Dump remainning message that wasn't calculated
 }
