@@ -26,6 +26,7 @@
 #include <X11/Xos.h>
 #elif defined(_WIN32)
 #include <windows.h>
+#include <pthread.h>
 #endif
 
 #define TERMINAL_GET_IBUFF_CHAR(t, x, y) ( *((t)->ibuff+(x)+(y)*(t)->buffw) )
@@ -77,6 +78,7 @@ struct terminal {
 #elif defined(_WIN32)
     HWND hwnd;
     HDC hdc;
+    pthread_t* thread;
 #endif
     int fontw, fonth;
     int offsetx, offsety;

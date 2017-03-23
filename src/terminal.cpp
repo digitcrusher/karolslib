@@ -29,7 +29,7 @@ terminal* stdterm;
 
 #if defined(_WIN32)
 static unsigned int windowid=0;
-static LRESULT CALLBACK karolslib_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
+static LRESULT CALLBACK karolslib_terminal_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
     HDC hdc;
     PAINTSTRUCT ps;
     switch(iMsg) {
@@ -43,6 +43,10 @@ static LRESULT CALLBACK karolslib_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, L
             break;
     }
     return DefWindowProc(hwnd, iMsg, wParam, lParam); //Dump remainning message that wasn't calculated
+}
+void* karolslib_terminal_thread(void* term) {
+    while(1) updateTerminal((terminal*)term);
+    return NULL;
 }
 #endif
 terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void (*redraw)(terminal*)) {
@@ -90,7 +94,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     WNDCLASSEX wndclass; //Temporary structure with window settings
     wndclass.cbSize        = sizeof(wndclass); //Size of WNDCLASSEX
     wndclass.style         = CS_HREDRAW | CS_VREDRAW | CS_OWNDC; //Style parameters
-    wndclass.lpfnWndProc   = karolslib_WndProc; //Pointer to WndProc which handles messages
+    wndclass.lpfnWndProc   = karolslib_terminal_WndProc; //Pointer to WndProc which handles messages
     wndclass.cbClsExtra    = 0;
     wndclass.cbWndExtra    = 0;
     wndclass.hInstance     = karolslib_hInstance;
@@ -121,6 +125,7 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     ShowWindow(term->hwnd, karolslib_iCmdShow); //Show window
     UpdateWindow(term->hwnd); //Redraw window
     free(szAppName);
+    pthread_create(term->thread, NULL, karolslib_terminal_thread, (void*)term);
 #endif
     return term;
 }
@@ -132,6 +137,7 @@ void deleteTerminal(terminal* term) {
     XDestroyWindow(term->d, term->w);
     XCloseDisplay(term->d);
 #elif defined(_WIN32)
+    pthread_cancel(*term->thread);
     DestroyWindow(term->hwnd);
 #endif
     free(term);
