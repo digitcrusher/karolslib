@@ -190,18 +190,20 @@ void redrawTerminal(terminal* term) {
     term->hdc = CreateCompatibleDC(hdcTemp);
     HBITMAP hbmMem = CreateCompatibleBitmap(hdcTemp, rect.right-rect.left, rect.bottom-rect.top);
     HGDIOBJ hbmOld = SelectObject(term->hdc, hbmMem);
+    SelectObject(term->hdc, CreateFont(0, 0, 0, 0, FW_DONTCARE, 0, 0, 0, DEFAULT_CHARSET
+                ,OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Fixedsys"));
     for(int x=0; x<term->buffw; x++) {
         for(int y=0; y<term->buffh; y++) {
             char c[2];
             *c = TERMINAL_GET_OBUFF_CHAR(term, x, y);
             *(c+1) = '\0';
             if(term->flags & TERMINAL_CURSOR && x == term->ocurx && y == term->ocury) {
-                SetDCPenColor(hdc, RGB(255, 255, 255));
+                SetDCPenColor(term->hdc, RGB(255, 255, 255));
                 RECT rect = {TERMINAL_GET_CHAR_X_COORD(term, x)-term->offsetx-term->marginleft
                             ,TERMINAL_GET_CHAR_Y_COORD(term, y)-term->offsety-term->margintop
-                            ,term->fontw+term->marginleft+term->marginright
-                            ,term->fonth+term->margintop+term->marginbottom};
-                FillRect(term->hdc, &rect, GetStockObject(DC_PEN));
+                            ,TERMINAL_GET_CHAR_X_COORD(term, x+1)-term->offsetx-term->marginleft
+                            ,TERMINAL_GET_CHAR_Y_COORD(term, y+1)-term->offsety-term->margintop};
+                FillRect(term->hdc, &rect, (HBRUSH)GetStockObject(DC_PEN));
                 SetTextColor(term->hdc, RGB(0, 0, 0));
                 SetBkColor(term->hdc, RGB(255, 255, 255));
                 TextOut(term->hdc, TERMINAL_GET_CHAR_X_COORD(term, x)
@@ -294,6 +296,7 @@ void updateTerminal(terminal* term) {
     }
     redrawTerminal(term);
 #elif defined(_WIN32)
+    UpdateWindow(term->hwnd);
     MSG msg;
     while(PeekMessage(&msg, term->hwnd, 0, 0, 1)) {
         TranslateMessage(&msg);
@@ -370,9 +373,7 @@ void checkTerminal(terminal* term) {
 #if defined(__linux__)
     XResizeWindow(term->d, term->w, TERMINAL_GET_TEXTAREA_WIDTH(term), TERMINAL_GET_TEXTAREA_HEIGHT(term));
 #elif defined(_WIN32)
-    RECT rect;
-    GetClientRect(term->hwnd, &rect);
-    MoveWindow(term->hwnd, rect.left, rect.top
+    MoveWindow(term->hwnd, 0, 0
               ,TERMINAL_GET_TEXTAREA_WIDTH(term), TERMINAL_GET_TEXTAREA_HEIGHT(term), 0);
 #endif
     if(term->ocurx < 0) {
