@@ -7,4 +7,4 @@ Compile with make.
 
 For linux: When linking against it include "-L/usr/lib/X11R6/lib -lX11".
 
-For windows: When linking against it include "-mwindows -lgdi32".
+For windows: When linking against it include "-pthread -mwindows -lgdi32".

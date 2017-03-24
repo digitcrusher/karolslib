@@ -30,15 +30,11 @@ terminal* stdterm;
 #if defined(_WIN32)
 static unsigned int windowid=0;
 static LRESULT CALLBACK karolslib_terminal_WndProc(HWND hwnd, UINT iMsg, WPARAM wParam, LPARAM lParam) {
-    HDC hdc;
     PAINTSTRUCT ps;
     switch(iMsg) {
         case WM_PAINT:
-		    hdc = BeginPaint(hwnd, &ps);
+		    BeginPaint(hwnd, &ps);
     		EndPaint(hwnd, &ps);
-            return 0;
-            break;
-        case WM_TIMER:
             return 0;
             break;
     }
@@ -125,21 +121,21 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     ShowWindow(term->hwnd, karolslib_iCmdShow); //Show window
     UpdateWindow(term->hwnd); //Redraw window
     free(szAppName);
-    pthread_create(term->thread, NULL, karolslib_terminal_thread, (void*)term);
+    pthread_create(&term->thread, NULL, karolslib_terminal_thread, (void*)term);
 #endif
     return term;
 }
 void deleteTerminal(terminal* term) {
-    free(term->ibuff);
-    free(term->obuff);
 #if defined(__linux__)
     XFreeGC(term->d, term->gc);
     XDestroyWindow(term->d, term->w);
     XCloseDisplay(term->d);
 #elif defined(_WIN32)
-    pthread_cancel(*term->thread);
+    pthread_cancel(term->thread);
     DestroyWindow(term->hwnd);
 #endif
+    free(term->ibuff);
+    free(term->obuff);
     free(term);
 }
 void redrawTerminal(terminal* term) {
@@ -150,16 +146,18 @@ void redrawTerminal(terminal* term) {
                             ,TERMINAL_GET_TEXTAREA_WIDTH(term)
                             ,TERMINAL_GET_TEXTAREA_HEIGHT(term)
                             ,wa.depth);
+    XSetBackground(term->d, term->gc, WhitePixel(term->d, term->s));
     XSetForeground(term->d, term->gc, BlackPixel(term->d, term->s));
     XFillRectangle(term->d, term->p, term->gc, 0, 0
                   ,TERMINAL_GET_TEXTAREA_WIDTH(term)
                   ,TERMINAL_GET_TEXTAREA_HEIGHT(term));
-    XSetForeground(term->d, term->gc, WhitePixel(term->d, term->s));
     for(int x=0; x<term->buffw; x++) {
         for(int y=0; y<term->buffh; y++) {
             char c[2];
             *c = TERMINAL_GET_OBUFF_CHAR(term, x, y);
             *(c+1) = '\0';
+            XSetBackground(term->d, term->gc, BlackPixel(term->d, term->s));
+            XSetForeground(term->d, term->gc, WhitePixel(term->d, term->s));
             if(term->flags & TERMINAL_CURSOR && x == term->ocurx && y == term->ocury) {
                 XFillRectangle(term->d, term->p, term->gc
                               ,TERMINAL_GET_CHAR_X_COORD(term, x)-term->offsetx-term->marginleft
@@ -190,17 +188,30 @@ void redrawTerminal(terminal* term) {
     GetClientRect(term->hwnd, &rect);
     HDC hdcTemp = GetDC(term->hwnd);
     term->hdc = CreateCompatibleDC(hdcTemp);
-    HBITMAP hbmMem = CreateCompatibleBitmap(hdcTemp,rect.right-rect.left,rect.bottom-rect.top);
+    HBITMAP hbmMem = CreateCompatibleBitmap(hdcTemp, rect.right-rect.left, rect.bottom-rect.top);
     HGDIOBJ hbmOld = SelectObject(term->hdc, hbmMem);
-    SetTextColor(term->hdc, RGB(255,255,255));
-    SetBkColor(term->hdc, RGB(0,0,0));
     for(int x=0; x<term->buffw; x++) {
         for(int y=0; y<term->buffh; y++) {
             char c[2];
             *c = TERMINAL_GET_OBUFF_CHAR(term, x, y);
             *(c+1) = '\0';
-            TextOut(term->hdc, TERMINAL_GET_CHAR_X_COORD(term, x)
-                   ,TERMINAL_GET_CHAR_Y_COORD(term, y), c, strlen(c));
+            if(term->flags & TERMINAL_CURSOR && x == term->ocurx && y == term->ocury) {
+                SetDCPenColor(hdc, RGB(255, 255, 255));
+                RECT rect = {TERMINAL_GET_CHAR_X_COORD(term, x)-term->offsetx-term->marginleft
+                            ,TERMINAL_GET_CHAR_Y_COORD(term, y)-term->offsety-term->margintop
+                            ,term->fontw+term->marginleft+term->marginright
+                            ,term->fonth+term->margintop+term->marginbottom};
+                FillRect(term->hdc, &rect, GetStockObject(DC_PEN));
+                SetTextColor(term->hdc, RGB(0, 0, 0));
+                SetBkColor(term->hdc, RGB(255, 255, 255));
+                TextOut(term->hdc, TERMINAL_GET_CHAR_X_COORD(term, x)
+                       ,TERMINAL_GET_CHAR_Y_COORD(term, y), c, strlen(c));
+            }else {
+                SetTextColor(term->hdc, RGB(255, 255, 255));
+                SetBkColor(term->hdc, RGB(0, 0, 0));
+                TextOut(term->hdc, TERMINAL_GET_CHAR_X_COORD(term, x)
+                       ,TERMINAL_GET_CHAR_Y_COORD(term, y), c, strlen(c));
+            }
         }
     }
     if(term->redraw != NULL) {
@@ -269,10 +280,10 @@ void updateTerminal(terminal* term) {
                         ++term->icurx;
                         break;
                 }
-                checkTerminal(term);
                 if(term->flags & TERMINAL_IECHO) {
                     cwrite(term, *buff);
                 }
+                checkTerminal(term);
                 break;
             case DestroyNotify:
                 if(term->close != NULL) {
@@ -297,9 +308,23 @@ void updateTerminal(terminal* term) {
                 }
                 break;
             case WM_CREATE:
-                break;/*
+                break;
             case WM_CHAR:
-                break;*/
+                switch(msg.wParam) {
+                    case '\b':
+                        --term->icurx;
+                        TERMINAL_GET_CURR_IBUFF_CHAR(term) = '\0';
+                        break;
+                    default:
+                        TERMINAL_GET_CURR_IBUFF_CHAR(term) = msg.wParam;
+                        ++term->icurx;
+                        break;
+                }
+                if(term->flags & TERMINAL_IECHO) {
+                    cwrite(term, msg.wParam);
+                }
+                checkTerminal(term);
+                break;
             case WM_KEYDOWN:
                 switch(msg.wParam) {
                     case VK_UP:
@@ -345,6 +370,10 @@ void checkTerminal(terminal* term) {
 #if defined(__linux__)
     XResizeWindow(term->d, term->w, TERMINAL_GET_TEXTAREA_WIDTH(term), TERMINAL_GET_TEXTAREA_HEIGHT(term));
 #elif defined(_WIN32)
+    RECT rect;
+    GetClientRect(term->hwnd, &rect);
+    MoveWindow(term->hwnd, rect.left, rect.top
+              ,TERMINAL_GET_TEXTAREA_WIDTH(term), TERMINAL_GET_TEXTAREA_HEIGHT(term), 0);
 #endif
     if(term->ocurx < 0) {
         term->ocurx = term->buffw-1;

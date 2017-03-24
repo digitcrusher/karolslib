@@ -140,6 +140,8 @@ void karolslib_init() {
     addRtn(*createRoutine("main", (void (*)())NULL), getMod("main", stdmodbrd));
     //Create init.
     addRtn(*createRoutine("init", (void (*)())NULL), getMod("main", stdmodbrd));
+    //Create deinit.
+    addRtn(*createRoutine("deinit", (void (*)())NULL), getMod("main", stdmodbrd));
     //Iterate over the modules from modbrd.
     for(int i=0; i<stdmodbrd->size; i++) {
         routine* rtn;
@@ -150,4 +152,20 @@ void karolslib_init() {
             }
         }
     }
+}
+void karolslib_deinit() {
+    //Iterate over the modules from modbrd.
+    for(int i=0; i<stdmodbrd->size; i++) {
+        routine* rtn;
+        //Rtn has deinit? If yes call it.
+        if((rtn = getRtn("deinit", getMod(i, stdmodbrd)))) {
+            if(rtn->func != NULL) {
+                rtn->func();
+            }
+        }
+    }
+    //Delete stdmodbrd.
+    deleteModBoard(stdmodbrd);
+    //Delete stdterm.
+    deleteTerminal(stdterm);
 }

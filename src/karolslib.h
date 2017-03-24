@@ -34,5 +34,6 @@ extern int karolslib_iCmdShow;
 #endif
 
 void karolslib_init();
+void karolslib_deinit();
 
 #endif
