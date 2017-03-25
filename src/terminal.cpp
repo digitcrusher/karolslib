@@ -190,8 +190,9 @@ void redrawTerminal(terminal* term) {
     term->hdc = CreateCompatibleDC(hdcTemp);
     HBITMAP hbmMem = CreateCompatibleBitmap(hdcTemp, rect.right-rect.left, rect.bottom-rect.top);
     HGDIOBJ hbmOld = SelectObject(term->hdc, hbmMem);
-    SelectObject(term->hdc, CreateFont(0, 0, 0, 0, FW_DONTCARE, 0, 0, 0, DEFAULT_CHARSET
-                ,OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Fixedsys"));
+    HGDIOBJ font = CreateFont(0, 0, 0, 0, FW_DONTCARE, 0, 0, 0, DEFAULT_CHARSET
+                ,OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Fixedsys");
+    SelectObject(term->hdc, font);
     for(int x=0; x<term->buffw; x++) {
         for(int y=0; y<term->buffh; y++) {
             char c[2];
@@ -221,7 +222,8 @@ void redrawTerminal(terminal* term) {
     }
     BitBlt(hdcTemp,rect.left,rect.top,rect.right-rect.left, rect.bottom-rect.top,term->hdc,0,0,SRCCOPY);
     SelectObject(term->hdc, hbmOld);
-    DeleteObject(hbmMem);
+    DeleteObject(term->hwnd, hbmMem);
+    DeleteObject(font);
     DeleteDC(term->hdc);
 #endif
 }
