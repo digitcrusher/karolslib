@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _KAROLSLIB_MODULE_H_
-#define _KAROLSLIB_MODULE_H_
+#ifndef KAROLSLIB_MODULE_H
+#define KAROLSLIB_MODULE_H
 
 struct routine {
     char* name; //Name for the routine - useful for name searching.

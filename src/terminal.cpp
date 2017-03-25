@@ -120,6 +120,8 @@ terminal* createTerminal(int w, int h, int flags, void (*close)(terminal*), void
     }
     ShowWindow(term->hwnd, karolslib_iCmdShow); //Show window
     UpdateWindow(term->hwnd); //Redraw window
+    SelectObject(term->hdc, CreateFont(0, 0, 0, 0, FW_DONTCARE, 0, 0, 0, DEFAULT_CHARSET
+                ,OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Fixedsys"));
     free(szAppName);
     pthread_create(&term->thread, NULL, karolslib_terminal_thread, (void*)term);
 #endif
@@ -190,8 +192,6 @@ void redrawTerminal(terminal* term) {
     term->hdc = CreateCompatibleDC(hdcTemp);
     HBITMAP hbmMem = CreateCompatibleBitmap(hdcTemp, rect.right-rect.left, rect.bottom-rect.top);
     HGDIOBJ hbmOld = SelectObject(term->hdc, hbmMem);
-    SelectObject(term->hdc, CreateFont(0, 0, 0, 0, FW_DONTCARE, 0, 0, 0, DEFAULT_CHARSET
-                ,OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, FF_DONTCARE, "Fixedsys"));
     for(int x=0; x<term->buffw; x++) {
         for(int y=0; y<term->buffh; y++) {
             char c[2];
@@ -373,8 +373,6 @@ void checkTerminal(terminal* term) {
 #if defined(__linux__)
     XResizeWindow(term->d, term->w, TERMINAL_GET_TEXTAREA_WIDTH(term), TERMINAL_GET_TEXTAREA_HEIGHT(term));
 #elif defined(_WIN32)
-    MoveWindow(term->hwnd, 0, 0
-              ,TERMINAL_GET_TEXTAREA_WIDTH(term), TERMINAL_GET_TEXTAREA_HEIGHT(term), 0);
 #endif
     if(term->ocurx < 0) {
         term->ocurx = term->buffw-1;

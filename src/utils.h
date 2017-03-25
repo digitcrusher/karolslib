@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _KAROLSLIB_UTILS_H_
-#define _KAROLSLIB_UTILS_H_
+#ifndef KAROLSLIB_UTILS_H
+#define KAROLSLIB_UTILS_H
 
 #if defined(__linux__)
 int getch();

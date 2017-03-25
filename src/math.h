@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _KAROLSLIB_MATH_H_
-#define _KAROLSLIB_MATH_H_
+#ifndef KAROLSLIB_MATH_H
+#define KAROLSLIB_MATH_H
 #ifdef M_PI
 #undef M_PI
 #endif

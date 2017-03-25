@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _KAROLSLIB_H_
-#define _KAROLSLIB_H_
+#ifndef KAROLSLIB_H
+#define KAROLSLIB_H
 #define KAROLSLIB_MAJOR_VERSION 0
 #define KAROLSLIB_MINOR_VERSION 2
 

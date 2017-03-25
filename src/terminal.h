@@ -18,8 +18,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef _KAROLSLIB_TERMINAL_H_
-#define _KAROLSLIB_TERMINAL_H_
+#ifndef KAROLSLIB_TERMINAL_H
+#define KAROLSLIB_TERMINAL_H
 #if defined(__linux__)
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
