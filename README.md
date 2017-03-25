@@ -3,7 +3,7 @@ My universal library.
 
 Compile with make.
 
-"check" runs perl to find and replace 4 whitespaces with a tab.
+"check" runs perl to find and replace 4 whitespaces with a tab in "Makefile".
 
 For linux: Required linker parameters: "-L/usr/lib/X11R6/lib -lX11".
 

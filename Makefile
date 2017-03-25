@@ -22,7 +22,7 @@ LD=ar
 LDFLAGS=rcs
 LDLIBS=
 CC=g++
-CCFLAGS=-Wall -std=c++11 -ggdb -O0 -I.
+CCFLAGS=-Wall -std=c++11 -O -I.
 
 all: clean karolslib
 

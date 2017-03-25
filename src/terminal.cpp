@@ -222,7 +222,7 @@ void redrawTerminal(terminal* term) {
     }
     BitBlt(hdcTemp,rect.left,rect.top,rect.right-rect.left, rect.bottom-rect.top,term->hdc,0,0,SRCCOPY);
     SelectObject(term->hdc, hbmOld);
-    DeleteObject(term->hwnd, hbmMem);
+    DeleteObject(hbmMem);
     DeleteObject(font);
     DeleteDC(term->hdc);
 #endif
