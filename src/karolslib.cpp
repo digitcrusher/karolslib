@@ -19,25 +19,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <stdlib.h>
-#include <src/module.h>
-#include <src/terminal.h>
+#include <src/utils/module.h>
+#include <src/window/terminal.h>
 #include <src/karolslib.h>
 
 #if !defined(_WIN32)
 #ifdef main
 #undef main
 #endif
-#define karolslib_main main
+#define KL_main main
 #endif
-int karolslib_main(int argc, char** argv) {
-    return karolslib_user_main(argc, argv);
+int KL_main(int argc, char** argv) {
+    return KL_user_main(argc, argv);
 }
 #if defined(_WIN32)
 #ifdef WinMain
 #undef WinMain
 #endif
-#define karolslib_WinMain WinMain
-static void karolslib_unEscapeQuotes(char *arg) {
+#define KL_WinMain WinMain
+static void KL_unEscapeQuotes(char *arg) {
 	char *last = NULL;
 	while(*arg) {
 		if(*arg == '"' && *last == '\\') {
@@ -55,7 +55,7 @@ static void karolslib_unEscapeQuotes(char *arg) {
 		arg++;
 	}
 }
-static int karolslib_parseCommandLine(char *cmdline, char **argv) {
+static int KL_parseCommandLine(char *cmdline, char **argv) {
 	char *bufp;
 	char *lastp = NULL;
 	int argc, last_argc;
@@ -99,7 +99,7 @@ static int karolslib_parseCommandLine(char *cmdline, char **argv) {
 		}
 		/* Strip out \ from \" sequences */
 		if(argv && last_argc != argc) {
-			karolslib_unEscapeQuotes(argv[last_argc]);
+			KL_unEscapeQuotes(argv[last_argc]);
 		}
 		last_argc = argc;
 	}
@@ -108,64 +108,64 @@ static int karolslib_parseCommandLine(char *cmdline, char **argv) {
 	}
 	return argc;
 }
-HINSTANCE karolslib_hInstance;
-HINSTANCE karolslib_hPrevInstance;
-PSTR karolslib_szCmdLine;
-int karolslib_iCmdShow;
-int WINAPI karolslib_WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow) {
-    karolslib_hInstance = hInstance;
-    karolslib_hPrevInstance = hPrevInstance;
-    karolslib_szCmdLine = szCmdLine;
-    karolslib_iCmdShow = iCmdShow;
+HINSTANCE KL_hInstance;
+HINSTANCE KL_hPrevInstance;
+PSTR KL_szCmdLine;
+int KL_iCmdShow;
+int WINAPI KL_WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow) {
+    KL_hInstance = hInstance;
+    KL_hPrevInstance = hPrevInstance;
+    KL_szCmdLine = szCmdLine;
+    KL_iCmdShow = iCmdShow;
     char** argv;
     int argc;
-	argc = karolslib_parseCommandLine(szCmdLine, NULL);
+	argc = KL_parseCommandLine(szCmdLine, NULL);
 	argv = (char**)malloc(sizeof(char*)*(strlen(szCmdLine)+1));
 	if(argv == NULL) {
 		return 0;
 	}
-	karolslib_parseCommandLine(szCmdLine, argv);
-    return karolslib_main(argc, argv);
+	KL_parseCommandLine(szCmdLine, argv);
+    return KL_main(argc, argv);
 }
 #endif
 
-void karolslib_init() {
+void KL_init() {
     //Set up stdmodbrd.
-    stdmodbrd = createModBoard();
+    KL_stdmodbrd = KL_createModBoard();
     //Set up stdterm.
-    stdterm = createTerminal(TERMINAL_DEFAULT_BUFF_WIDTH, TERMINAL_DEFAULT_BUFF_HEIGHT, TERMINAL_DEFAULT_FLAGS, NULL, NULL);
+    KL_stdterm = KL_createTerminal(TERMINAL_DEFAULT_BUFF_WIDTH, TERMINAL_DEFAULT_BUFF_HEIGHT, TERMINAL_DEFAULT_FLAGS, NULL, NULL);
     //Create module main and add it to the global modboard modbrd.
-    addMod(*createModule("main", NULL), stdmodbrd);
+    KL_addMod(*KL_createModule("main", NULL), KL_stdmodbrd);
     //Create routine main and add it to module main from modbrd.
-    addRtn(*createRoutine("main", (void (*)())NULL), getMod("main", stdmodbrd));
+    KL_addRtn(*KL_createRoutine("main", (void (*)())NULL), KL_getMod("main", KL_stdmodbrd));
     //Create init.
-    addRtn(*createRoutine("init", (void (*)())NULL), getMod("main", stdmodbrd));
+    KL_addRtn(*KL_createRoutine("init", (void (*)())NULL), KL_getMod("main", KL_stdmodbrd));
     //Create deinit.
-    addRtn(*createRoutine("deinit", (void (*)())NULL), getMod("main", stdmodbrd));
+    KL_addRtn(*KL_createRoutine("deinit", (void (*)())NULL), KL_getMod("main", KL_stdmodbrd));
     //Iterate over the modules from modbrd.
-    for(int i=0; i<stdmodbrd->size; i++) {
-        routine* rtn;
+    for(int i=0; i<KL_stdmodbrd->size; i++) {
+        KL_routine* rtn;
         //Rtn has init? If yes call it.
-        if((rtn = getRtn("init", getMod(i, stdmodbrd)))) {
+        if((rtn = KL_getRtn("init", KL_getMod(i, KL_stdmodbrd)))) {
             if(rtn->func != NULL) {
                 rtn->func();
             }
         }
     }
 }
-void karolslib_deinit() {
+void KL_deinit() {
     //Iterate over the modules from modbrd.
-    for(int i=0; i<stdmodbrd->size; i++) {
-        routine* rtn;
+    for(int i=0; i<KL_stdmodbrd->size; i++) {
+        KL_routine* rtn;
         //Rtn has deinit? If yes call it.
-        if((rtn = getRtn("deinit", getMod(i, stdmodbrd)))) {
+        if((rtn = KL_getRtn("deinit", KL_getMod(i, KL_stdmodbrd)))) {
             if(rtn->func != NULL) {
                 rtn->func();
             }
         }
     }
     //Delete stdmodbrd.
-    deleteModBoard(stdmodbrd);
+    KL_destroyModBoard(KL_stdmodbrd);
     //Delete stdterm.
-    deleteTerminal(stdterm);
+    KL_destroyTerminal(KL_stdterm);
 }

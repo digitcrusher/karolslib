@@ -1,5 +1,5 @@
 /*
- * karolslib.h
+ * math.h
  * karolslib Source Code
  * Available on Github
  *
@@ -18,22 +18,26 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef KAROLSLIB_H
-#define KAROLSLIB_H
-#define KAROLSLIB_MAJOR_VERSION 0
-#define KAROLSLIB_MINOR_VERSION 2
-
-#define main KL_user_main
-int KL_user_main(int argc, char** argv);
-#if defined(_WIN32)
-#include <windows.h>
-extern HINSTANCE KL_hInstance;
-extern HINSTANCE KL_hPrevInstance;
-extern PSTR KL_szCmdLine;
-extern int KL_iCmdShow;
+#ifndef KAROLSLIB_MATH_H
+#define KAROLSLIB_MATH_H
+#ifdef M_PI
+#undef M_PI
 #endif
+#define M_PI 3.14159265358979323846
 
-void KL_init();
-void KL_deinit();
+struct V {
+    float x,y;
+};
+struct line {
+    float x1,y1,x2,y2;
+};
+struct square {
+    float x1,y1,x2,y2;
+};
+
+bool sqrInSqr(square sqr1, square sqr2);
+bool fpil(line line, V point); //float point in line
+bool fpilu(line line, V point, float unprec); //float point in line with unprecision
+float fatp(V p1, V p2); //float angle to point
 
 #endif
