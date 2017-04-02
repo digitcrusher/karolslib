@@ -41,14 +41,14 @@ char* ftos(float x); //Convert float to string
 int htoi(char* hex); //Convert hex string to int
 //char* itos(int input, char* msg); //Convert int to string and concatenate msg to the end !!!!!NOT USED!!!!!
 
-template<typename T> class Vector {
+template<typename T> class KL_Vector {
     private:
         int vsize;
         const int maxsize=2147483647;
         T* array;
     public:
-        Vector();
-        ~Vector();
+        KL_Vector();
+        ~KL_Vector();
         bool push_back(T t);
         bool pop_back(T* t);
         bool replace(int element, T t);
@@ -59,5 +59,55 @@ template<typename T> class Vector {
         int size();
         T operator[](int n);
 };
+template<typename T> KL_Vector<T>::KL_Vector() {
+    vsize=0;
+    array=(T*)malloc(sizeof(T)*vsize);
+}
+template<typename T> KL_Vector<T>::~KL_Vector() {
+    free(array);
+}
+template<typename T> bool KL_Vector<T>::push_back(T t) {
+    if(resize(vsize+1))
+        return 1;
+    array[vsize-1] = t;
+    return 0;
+}
+template<typename T> bool KL_Vector<T>::pop_back(T* t) {
+    *t = array[vsize-1];
+    return resize(vsize-1);
+}
+template<typename T> bool KL_Vector<T>::replace(int element, T t) {
+    if(element>vsize-1)
+        return 1;
+    array[element] = t;
+    return 0;
+}
+template<typename T> bool KL_Vector<T>::resize(int newsize) {
+    if(newsize>maxsize)
+        return 1;
+    array = (T*)realloc((void*)array, sizeof(T)*newsize);
+    vsize = newsize;
+    return 0;
+}
+template<typename T> bool KL_Vector<T>::getP(int element, T* t) {
+    if(element>vsize-1)
+        return 1;
+    t = array+element;
+    return 0;
+}
+template<typename T> bool KL_Vector<T>::clear() {
+    vsize=0;
+    resize(vsize);
+    return 0;
+}
+template<typename T> T* KL_Vector<T>::getArray() {
+    return array;
+}
+template<typename T> int KL_Vector<T>::size() {
+    return vsize;
+}
+template<typename T> T KL_Vector<T>::operator[](int n) {
+    return array[n];
+}
 
 #endif

@@ -23,57 +23,6 @@
 #include <string.h>
 #include <src/utils/utils.h>
 
-template<class T> Vector<T>::Vector() {
-    vsize=0;
-    array=(T*)malloc(sizeof(T)*vsize);
-}
-template<class T> Vector<T>::~Vector() {
-    free(array);
-}
-template<class T> bool Vector<T>::push_back(T t) {
-    if(resize(vsize+1))
-        return 1;
-    array[vsize-1] = t;
-    return 0;
-}
-template<class T> bool Vector<T>::pop_back(T* t) {
-    *t = array[vsize-1];
-    return resize(vsize-1);
-}
-template<class T> bool Vector<T>::replace(int element, T t) {
-    if(element>vsize-1)
-        return 1;
-    array[element] = t;
-    return 0;
-}
-template<class T> bool Vector<T>::resize(int newsize) {
-    if(newsize>maxsize)
-        return 1;
-    array = (T*)realloc((void*)array, sizeof(T)*newsize);
-    vsize = newsize;
-    return 0;
-}
-template<class T> bool Vector<T>::getP(int element, T* t) {
-    if(element>vsize-1)
-        return 1;
-    t = array+element;
-    return 0;
-}
-template<class T> bool Vector<T>::clear() {
-    vsize=0;
-    resize(vsize);
-    return 0;
-}
-template<class T> T* Vector<T>::getArray() {
-    return array;
-}
-template<class T> int Vector<T>::size() {
-    return vsize;
-}
-template<class T> T Vector<T>::operator[](int n) {
-    return array[n];
-}
-
 #if defined(__linux__)
 #include <stdio.h>
 #include <termios.h>

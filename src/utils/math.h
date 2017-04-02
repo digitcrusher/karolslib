@@ -25,9 +25,19 @@
 #endif
 #define M_PI 3.14159265358979323846
 
-struct V {
+struct V2i {
+    int x,y;
+};
+struct V2f {
     float x,y;
 };
+struct V3i {
+    int x,y,z;
+};
+struct V3f {
+    float x,y,z;
+};
+typedef V2f V;
 struct line {
     float x1,y1,x2,y2;
 };
