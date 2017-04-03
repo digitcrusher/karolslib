@@ -38,6 +38,14 @@ struct V3f {
     float x,y,z;
 };
 typedef V2f V;
+V2i operator+(const V2i& lvalue, const V2i& rvalue);
+V2f operator+(const V2f& lvalue, const V2f& rvalue);
+V3i operator+(const V3i& lvalue, const V3i& rvalue);
+V3f operator+(const V3f& lvalue, const V3f& rvalue);
+V2i operator-(const V2i& lvalue, const V2i& rvalue);
+V2f operator-(const V2f& lvalue, const V2f& rvalue);
+V3i operator-(const V3i& lvalue, const V3i& rvalue);
+V3f operator-(const V3f& lvalue, const V3f& rvalue);
 struct line {
     float x1,y1,x2,y2;
 };

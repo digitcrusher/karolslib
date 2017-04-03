@@ -22,9 +22,10 @@
 #define KAROLSLIB_UTILS_H
 
 #if defined(__linux__)
+long KL_getNS();
 int getch();
 #elif defined(_WIN32)
-long getMS();
+long KL_getNS();
 void hidecursor();
 #endif
 
@@ -49,8 +50,8 @@ template<typename T> class KL_Vector {
     public:
         KL_Vector();
         ~KL_Vector();
-        bool push_back(T t);
-        bool pop_back(T* t);
+        bool pushBack(T t);
+        bool popBack(T* t);
         bool replace(int element, T t);
         bool resize(int newsize);
         bool getP(int element, T* t);
@@ -66,13 +67,13 @@ template<typename T> KL_Vector<T>::KL_Vector() {
 template<typename T> KL_Vector<T>::~KL_Vector() {
     free(array);
 }
-template<typename T> bool KL_Vector<T>::push_back(T t) {
+template<typename T> bool KL_Vector<T>::pushBack(T t) {
     if(resize(vsize+1))
         return 1;
     array[vsize-1] = t;
     return 0;
 }
-template<typename T> bool KL_Vector<T>::pop_back(T* t) {
+template<typename T> bool KL_Vector<T>::popBack(T* t) {
     *t = array[vsize-1];
     return resize(vsize-1);
 }

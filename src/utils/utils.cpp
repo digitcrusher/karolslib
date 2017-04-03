@@ -27,6 +27,12 @@
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
+#include <time.h>
+long KL_getNS() {
+    timespec ts;
+    if(clock_gettime(CLOCK_MONOTONIC, &ts)) return 0;
+    return ts.tv_sec*1000000000+ts.tv_nsec;
+}
 int getch() {
   struct termios oldt, newt;
   int ch;
@@ -40,11 +46,11 @@ int getch() {
 }
 #elif defined(_WIN32)
 #include <windows.h>
-long getMS() { //Get milliseconds
+long KL_getNS() { //Get nanoseconds
     LARGE_INTEGER f,c; //Union which will store frequency and ticks
     if(!QueryPerformanceFrequency(&f)) return 0; //Try to get processor clock frequency
     if(!QueryPerformanceCounter(&c)) return 0; //Try to get processor clock ticks
-    return c.QuadPart/(f.QuadPart/1000); //Return milliseconds (Ticks / (Frequency / MSperSECOND))
+    return c.QuadPart/(f.QuadPart/1000000000); //Return nanoseconds (Ticks / (Frequency / MSperSECOND))
 }
 void hidecursor() {
     HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);

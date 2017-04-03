@@ -21,6 +21,31 @@
 #include <math.h>
 #include <src/utils/math.h>
 
+V2i operator+(const V2i& lvalue, const V2i& rvalue) {
+    return {lvalue.x+rvalue.x, lvalue.y+rvalue.y};
+}
+V2f operator+(const V2f& lvalue, const V2f& rvalue) {
+    return {lvalue.x+rvalue.x, lvalue.y+rvalue.y};
+}
+V3i operator+(const V3i& lvalue, const V3i& rvalue) {
+    return {lvalue.x+rvalue.x, lvalue.y+rvalue.y, lvalue.z+rvalue.z};
+}
+V3f operator+(const V3f& lvalue, const V3f& rvalue) {
+    return {lvalue.x+rvalue.x, lvalue.y+rvalue.y, lvalue.z+rvalue.z};
+}
+V2i operator-(const V2i& lvalue, const V2i& rvalue) {
+    return {lvalue.x-rvalue.x, lvalue.y-rvalue.y};
+}
+V2f operator-(const V2f& lvalue, const V2f& rvalue) {
+    return {lvalue.x-rvalue.x, lvalue.y-rvalue.y};
+}
+V3i operator-(const V3i& lvalue, const V3i& rvalue) {
+    return {lvalue.x-rvalue.x, lvalue.y-rvalue.y, lvalue.z-rvalue.z};
+}
+V3f operator-(const V3f& lvalue, const V3f& rvalue) {
+    return {lvalue.x-rvalue.x, lvalue.y-rvalue.y, lvalue.z-rvalue.z};
+}
+
 bool sqrInSqr(square sqr1, square sqr2) {
     return (sqr2.x1 >= sqr1.x1 && sqr2.x1 <= sqr1.x2 && sqr2.y1 >= sqr1.y1 && sqr2.y1 <= sqr1.y2) ||
            (sqr2.x2 >= sqr1.x1 && sqr2.x2 <= sqr1.x2 && sqr2.y2 >= sqr1.y1 && sqr2.y2 <= sqr1.y2) ||
